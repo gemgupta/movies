@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import MoviesList from "./components/MoviesList";
 import "./App.css";
 
@@ -9,11 +9,11 @@ function App() {
   const [isError, setisError] = useState(null);
   const [retryTimeoutId, setRetryTimeoutId] = useState(null);
 
-  async function fetchMovieHandler() {
+  const fetchMovieHandler = useCallback(async () => {
     setisError(null);
     setisLoading(true);
     try {
-      const response = await fetch("https://swapi.dev/api/film/");
+      const response = await fetch("https://swapi.dev/api/films/");
       if (!response.ok) {
         throw new Error("Something went wrong. Retrying...");
       }
@@ -21,11 +21,16 @@ function App() {
       setmovie(data.results);
     } catch (error) {
       setisError(error.message);
-      const myTimeout = setTimeout(fetchMovieHandler, 5000);    
+      const myTimeout = setTimeout(fetchMovieHandler, 5000);
       setRetryTimeoutId(myTimeout);
     }
     setisLoading(false);
-  }
+  }, []);
+
+  useEffect(() => {
+    fetchMovieHandler();
+  }, [fetchMovieHandler]);
+
   const cancelError = () => {
     if (retryTimeoutId) {
       clearTimeout(retryTimeoutId);
