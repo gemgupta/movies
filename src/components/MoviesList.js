@@ -9,6 +9,8 @@ const MovieList = (props) => {
       {props.movies.map((movie) => (
         <Movie
           key={movie.episode_id}
+          id={movie.episode_id}
+          onRemove={props.onRemoveMovie}
           title={movie.title}
           releaseDate={movie.release_date}
           openingText={movie.opening_crawl}
